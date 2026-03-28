@@ -207,6 +207,15 @@
     background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,45,120,.06) 2px,rgba(255,45,120,.06) 3px);
     pointer-events:none; }
 
+  .photo-carousel { position:relative; width:100%; }
+  .carousel-img { width:100%; display:none; aspect-ratio:4/3; object-fit:cover;
+    filter:contrast(1.1) saturate(0.75) brightness(0.8); }
+  .carousel-img.active { display:block; }
+
+  .carousel-dots { display:flex; justify-content:center; gap:8px; padding:8px 0 4px; position:relative; z-index:2; }
+  .dot { width:6px; height:6px; border-radius:50%; background:rgba(255,45,120,.25); transition:background .3s; }
+  .dot.active { background:var(--pink); box-shadow:0 0 6px var(--pink); }
+
   .bottom-blink { font-size:.55rem; color:rgba(255,45,120,.22); letter-spacing:4px;
     text-align:center; animation:blink 2s step-end infinite; padding-bottom:20px; }
 </style>
@@ -279,20 +288,23 @@
   <div class="coords-inner">
     <div class="coords-box">
       <div class="coords-scan"></div>
-      <div class="coords-label">█ ПОИСК СИГНАЛА...</div>
-      <div class="coords-val">??°??'??" N<br>??°??'??" E</div>
-      <div class="coords-sub">// координаты будут обновлены</div>
+      <div class="coords-label">█ СИГНАЛ ПОЛУЧЕН</div>
+      <div class="coords-val">55°49'50" N<br>38°05'28" E</div>
+      <div class="coords-sub">// 55.830582, 38.090974</div>
     </div>
 
     <div class="photo-box">
-      <!-- Замени на <img src="photo.jpg" alt=""> когда будет фото -->
-      <div class="photo-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <path d="M21 15l-5-5L5 21"/>
-        </svg>
-        <span>// ФОТО БУДЕТ ДОБАВЛЕНО</span>
+      <div class="photo-carousel">
+        <img class="carousel-img active" src="photo1.jpg" alt="">
+        <img class="carousel-img" src="photo2.jpg" alt="">
+        <img class="carousel-img" src="photo3.jpg" alt="">
+        <img class="carousel-img" src="photo4.jpg" alt="">
+      </div>
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
       </div>
       <div class="photo-overlay"></div>
     </div>
@@ -303,6 +315,18 @@
 
 <script>
   if (window.Telegram?.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+
+  // carousel
+  const imgs = document.querySelectorAll('.carousel-img');
+  const dots = document.querySelectorAll('.dot');
+  let slide = 0;
+  setInterval(() => {
+    imgs[slide].classList.remove('active');
+    dots[slide].classList.remove('active');
+    slide = (slide + 1) % imgs.length;
+    imgs[slide].classList.add('active');
+    dots[slide].classList.add('active');
+  }, 3000);
 
   const IDS = ['s1','s2','s3','s4','s5','s6'];
   const screens = IDS.map(id => document.getElementById(id));
